@@ -10,16 +10,96 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:durango-code.helloWorld"
+    "onCommand:durango-code.compile-project",
+    "onCommand:durango-code.clean-project",
+    "onCommand:durango-code.run-project",
+    "onCommand:durango-code.compile-and-run-project",
+    "onCommand:durango-code.create-project",
+    "onCommand:durango-code.run-nanoboot",
+    "onCommand:durango-code.send-to-durango-psv",
+    "onCommand:durango-code.load-from-durango-psv"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "durango-code.helloWorld",
-        "title": "Hello World"
+        "command": "durango-code.compile-project",
+        "title": "Durango Code: Compile Project"
+      },
+      {"command": "durango-code.clean-project",
+       "title": "Durango Code: Clean Project"
+      },
+      {
+        "command": "durango-code.run-project",
+        "title": "Durango Code: Run on an Emulator"
+      },
+      {
+        "command": "durango-code.compile-and-run-project",
+        "title": "Durango Code: Compile and Run on an Emulator"
+      },
+      {"command": "durango-code.create-project",
+       "title": "Durango Code: Create new Project"
+      },
+      {
+        "command": "durango-code.run-nanoboot",
+        "title": "Durango Code: Run Using NanoBoot"
+      },
+      {
+        "command": "durango-code.send-to-durango-psv",
+        "title": "Durango Code: Send To Durango (PSV)"
+      },
+      {
+        "command": "durango-code.load-from-durango-psv",
+        "title": "Durango Code: Load From Durango PSV"
       }
-    ]
+    ],
+    "configuration":{
+      "title": "Durango Code",
+      "properties": {
+        "PerditaPath": {
+          "title": "Perdita Path",
+          "type":"string",
+          "default": "perdita",
+          "description": "Perdita Emulator Executable Path"
+      },
+      "ToolchainType":{
+        "Title": "ToolChain Type",
+        "type":"string",
+        "enum": [
+          "Native",
+          "Docker"
+        ],
+        "enumDescriptions": [
+          "Use Native Commands",
+          "Use Docker Image"
+        ],
+        "default": "Native",
+        "description": "Defines the Toolchain To use Native Commands or use Docker Containers"
+      },
+      "NanobootPath":{
+        "title": "NanoBoot Path",
+        "type":"string",
+        "default":"nanoboot",
+        "description": "NanoBoot Executable Path"
+      },
+      "DockerImageName":{
+        "title": "Docker Image Name",
+        "type":"string",
+        "default":"zerasul/durangodevkit",
+        "description": "Durango Docker Image Name"
+      },
+      "DDK":{
+        "title": "Durango Dev Kit Path",
+        "type":"string",
+        "description": "Override current Durango Dev Kit Environment Variable"
+      },
+      "CustomRescompJar":{
+        "title": "Custom Rescomp Jar Path",
+        "type":"string",
+        "description": "Custom Rescomp Jar Path"
+      }
+
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -42,4 +122,5 @@
     "typescript": "^4.7.4",
     "@vscode/test-electron": "^2.1.5"
   }
+}
 }

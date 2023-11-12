@@ -1,0 +1,13 @@
+{
+    "commands":{
+        "compile":{
+            "w": "make",
+            "l": "make",
+            "d": "make",
+            "docker": "docker run -v $PWD:/src/durango zerasul/durangodevkit"
+        },
+        "clean": {
+                "w": "make clean"
+        }
+    }
+}
