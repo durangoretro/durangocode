@@ -4,10 +4,13 @@
             "w": "make",
             "l": "make",
             "d": "make",
-            "docker": "docker run -v $PWD:/src/durango zerasul/durangodevkit"
+            "docker": "docker run --rm -v $PWD:/src/durango zerasul/durangodevkit"
         },
         "clean": {
-                "w": "make clean"
+                "w": "make clean",
+                "l": "make clean",
+                "d": "make clean",
+                "docker":"docker run --rm -v $PWD:/src/durango zerasul/durangodevkit make clean"
         }
     }
 }

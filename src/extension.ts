@@ -12,8 +12,12 @@ export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand('durango-code.helloWorld', () => {
 		
 	});
+	let disposableCompile = vscode.commands.registerCommand('durango-code.compile-project', () => {
+		
+	});
 
 	context.subscriptions.push(disposable);
+	context.subscriptions.push(disposableCompile);
 }
 
 // this method is called when your extension is deactivated

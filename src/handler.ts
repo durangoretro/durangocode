@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import path = require("path");
-import { Terminal } from "vscode";
+import * as vscode from "vscode";
 
 /**
  * EXECUTION MODE:
@@ -31,6 +31,11 @@ export abstract class  CommandHandler{
      */
     protected extensionPath:string;
 
+    /**
+     * Durango Code Integrated Terminal
+     */
+    protected terminal:vscode.Terminal;
+
 
     /**
      * Class Constructor
@@ -38,6 +43,7 @@ export abstract class  CommandHandler{
      */
     constructor(extensionPath:string){
         this.extensionPath=extensionPath;
+        this.terminal= vscode.window.createTerminal('Durango.code');
     }
     /**
      * Handle the Compile Project Command
@@ -87,6 +93,10 @@ export abstract class  CommandHandler{
         }
 
     }
+
+    protected executeCommand(command:string,newLine:boolean=true){
+        this.terminal.sendText(command,newLine);
+    }
  };
 
 export class CommandWHandler extends CommandHandler{
@@ -96,8 +106,11 @@ export class CommandWHandler extends CommandHandler{
     }
 
     compile(): Boolean {
-       let command = this.handleCommand("compile",SYSTEM.WINDOWS);
+       let command:string|undefined = this.handleCommand("compile",SYSTEM.WINDOWS);
        //TODO: Execute command.
+       
+       if(command!==undefined)
+                this.executeCommand(command);
        return command!==undefined;
     }
     clean(): Boolean {
