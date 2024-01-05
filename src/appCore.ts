@@ -10,7 +10,7 @@ export class AppCore {
 
     public constructor(extensionPath: string) {
         this.extensionPath = extensionPath;
-        switch(platform.toString()){
+        switch(platform().toString()){
             case "win32":
                 this.commandHandler=new CommandWHandler(extensionPath);
             break;

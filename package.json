@@ -4,20 +4,12 @@
   "description": "Durango Computer Development Extension For VSCode",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.71.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
-    "onCommand:durcode.compileProject",
-    "onCommand:durango-code.clean-project",
-    "onCommand:durango-code.run-project",
-    "onCommand:durango-code.compile-and-run-project",
-    "onCommand:durango-code.create-project",
-    "onCommand:durango-code.run-nanoboot",
-    "onCommand:durango-code.send-to-durango-psv",
-    "onCommand:durango-code.load-from-durango-psv"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -125,7 +117,7 @@
       "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
-      "@types/vscode": "^1.71.0",
+      "@types/vscode": "^1.75.0",
       "@types/glob": "^7.2.0",
       "@types/mocha": "^9.1.1",
       "@types/node": "^16.x",

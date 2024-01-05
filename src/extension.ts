@@ -11,9 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
 	//AppCore
 	appCode=new AppCore(context.extensionPath);
 
-	let disposable = vscode.commands.registerCommand('durango-code.helloWorld', () => {
-		
-	});
+
 	let disposableCompile = vscode.commands.registerCommand('durcode.compileProject', () => {
 		
 	});
@@ -32,7 +30,6 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 	});
 
-	context.subscriptions.push(disposable);
 	context.subscriptions.push(disposableCompile);
 	context.subscriptions.push(disposableCreate);
 }
