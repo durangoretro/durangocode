@@ -18,6 +18,13 @@ export const CLEAN = "clean";
 
 export const RUN = "run";
 
+//Replacements
+
+export const EXECUTABLE="${executable}";
 
 //Others
 export const DURANGOCODE = 'Durango.code';
+
+export const RESOURCESDIR = 'resources';
+
+export const TEMPLATEDIR = 'template';

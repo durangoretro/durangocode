@@ -10,7 +10,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:durango-code.compile-project",
+    "onCommand:durcode.compileProject",
     "onCommand:durango-code.clean-project",
     "onCommand:durango-code.run-project",
     "onCommand:durango-code.compile-and-run-project",
@@ -23,7 +23,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "durango-code.compile-project",
+        "command": "durcode.compileProject",
         "title": "Durango Code: Compile Project"
       },
       {
