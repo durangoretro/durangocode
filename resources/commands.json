@@ -11,6 +11,12 @@
                 "l": "make clean",
                 "d": "make clean",
                 "docker":"docker run --rm -v $PWD:/src/durango zerasul/durangodevkit make clean"
+        },
+        "run": {
+            "w": "${executable} ${romFile)",
+            "l": "${executable} ${romFile)",
+            "d": "${executable} ${romFile)",
+            "docker": "${executable} ${romFile)"
         }
     }
 }
