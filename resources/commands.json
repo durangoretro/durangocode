@@ -4,13 +4,13 @@
             "w": "make",
             "l": "make",
             "d": "make",
-            "docker": "docker run --rm -v $PWD:/src/durango zerasul/durangodevkit"
+            "docker": "docker run --rm -v {{currentPath}}:/src/durango {{envVariables}} {{dockerTag}}"
         },
         "clean": {
                 "w": "make clean",
                 "l": "make clean",
                 "d": "make clean",
-                "docker":"docker run --rm -v $PWD:/src/durango zerasul/durangodevkit make clean"
+                "docker":"docker run --rm -v {{currentPath}}:/src/durango {{envVariables}} {{dockerTag}} make clean"
         },
         "run": {
             "w": "START \\B ${executable} \"${romFile)\"",

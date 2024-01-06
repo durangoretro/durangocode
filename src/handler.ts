@@ -2,6 +2,7 @@ import { readFileSync, mkdirSync, copyFileSync } from "fs";
 import path = require("path");
 import * as vscode from "vscode";
 import * as DurangoConstants from "./DurangoConstants";
+import { platform } from "os";
 
 /**
  * EXECUTION MODE:
@@ -36,6 +37,9 @@ export abstract class CommandHandler {
      */
     protected extensionPath: string;
 
+    /**
+     * Current System
+     */
     protected System: SYSTEM;
 
     /**
@@ -114,12 +118,12 @@ export abstract class CommandHandler {
     /**
      * Handle the Compile Project Command
      */
-    public compile(newLine: Boolean = true): Boolean {
+    public compile(newLine: boolean = true): Boolean {
         let command: string | undefined = this.handleCommand(DurangoConstants.COMPILE, this.System);
         //TODO: Execute command.
         this.setEnvironmentVariables();
         if (command !== undefined)
-            this.executeCommand(command, true);
+            this.executeCommand(command, newLine);
         return command !== undefined;
     }
 
@@ -210,9 +214,16 @@ export abstract class CommandHandler {
 
 };
 
+/**
+ * CommandWHandler: Command Handler for Native Windows Systems.
+ */
 export class CommandWHandler extends CommandHandler {
 
 
+    /**
+     * Class Constructor
+     * @param extensionPath Extension Path
+     */
     public constructor(extensionPath: string) {
         super(extensionPath);
         this.System = SYSTEM.WINDOWS;
@@ -241,6 +252,9 @@ export class CommandWHandler extends CommandHandler {
 
 };
 
+/**
+ * Command Handler For Linux/*Nix Systems
+ */
 export class CommandLHandler extends CommandHandler {
 
     public constructor(extensionPath: string) {
@@ -269,6 +283,105 @@ export class CommandLHandler extends CommandHandler {
 
 };
 
-export class CommandDHandler extends CommandLHandler{
- //TODO Implement Macos (darwin) implementation
+/**
+ * Command Handler For MacOs Based Systems (Darwin).
+ */
+export class CommandDHandler extends CommandLHandler {
+
+    constructor(extensionPath: string) {
+        super(extensionPath);
+        this.System = SYSTEM.DARWIN;
+    }
+    //TODO Implement Macos (darwin) implementation
+
+
 };
+
+/**
+ * Command Handler For Docker based Systems
+ */
+export class CommandDockerHandler extends CommandHandler {
+
+    /**
+     * Platform used (based on os.Platform() function)
+     */
+    private platform: string;
+
+    /**
+     * Default Constructor
+     * @param extensionPath Extension Path
+     */
+    public constructor(extensionPath: string) {
+        super(extensionPath);
+        this.System = SYSTEM.DOCKER;
+        this.platform = platform().toString();
+    }
+
+    /**
+     * Compile Command for Docker Based Systems
+     * @param newLine Add a new Line at the end of the command
+     * @returns True if the command Was Successful
+     */
+    public compile(newLine: boolean = true): Boolean {
+        let command = this.handleCommand(DurangoConstants.COMPILE, this.System);
+        command=this.ComposeCommandDocker(command);
+        if (command)
+            this.executeCommand(command, newLine);
+        return command !== undefined;
+    }
+
+    /**
+     * Clean Command for Docker based Systems
+     * @returns True if the command Was Successful
+     */
+    public clean():Boolean{
+        let command = this.handleCommand(DurangoConstants.CLEAN, this.System);
+        command=this.ComposeCommandDocker(command);
+        if (command)
+            this.executeCommand(command, true);
+        return command !== undefined;
+    }
+
+    /**
+     * Compose the Docker Command using replacements using the current configuration
+     * @param command Command to be composed with the replacements
+     * @returns Command with replacements
+     */
+    private ComposeCommandDocker(command:string|undefined):string|undefined{
+        let currPath = '"$PWD"';
+        //In case of windows use %CD% for volume creation
+        if (this.platform === 'win32') {
+            currPath = '"%CD%"'
+        }
+
+        //Environment Variables
+        let environmentVar = "";
+        //Set DDK Variable
+        let DDKVariable = vscode.workspace.getConfiguration().get(DurangoConstants.DDK);
+        if (DDKVariable) {
+            environmentVar += ` --env DDK=${DDKVariable}`;
+        }
+        //Set custom RescompPath
+        let rescompPath = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
+        if (rescompPath) {
+            environmentVar += ` --env RESCOMP=${rescompPath}`;
+        }
+        let DockerImageName = vscode.workspace.getConfiguration().get(DurangoConstants.DOCKERTAG, DurangoConstants.DEFAULTTAG);
+        command = command?.replace(/{{currentPath}}/g, currPath)
+        .replace(/{{envVariables}}/, environmentVar)
+        .replace(/{{dockerTag}}/, DockerImageName);
+
+        return command;
+    }
+
+    setEnvironmentVariables(): void {
+        throw new Error("Method not valid for Docker");
+    }
+    sendVSP(filePath: String): Boolean {
+        throw new Error("Method not implemented.");
+    }
+    loadVSP(filePath: String): Boolean {
+        throw new Error("Method not implemented.");
+    }
+
+}

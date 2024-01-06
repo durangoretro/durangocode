@@ -13,9 +13,9 @@ $(BUILD_DIR)/hello_durango.s: $(SOURCE_DIR)/main.c
 	cc65 $(COMPILER_OPT) -o $(BUILD_DIR)/hello_durango.s $(SOURCE_DIR)/main.c
 $(BUILD_DIR)/hello_durango.o: $(BUILD_DIR)/hello_durango.s
 	ca65 $(ASM_OPT) $(BUILD_DIR)/hello_durango.s -o $(BUILD_DIR)/hello_durango.o
-hello_durango.bin: $(BUILD_DIR)/ $(BUILD_DIR)/hello_durango.o
-	ld65 $(LINKER_OPT) $(BUILD_DIR)/hello_durango.o $(LINKER_LIBS) -o hello_durango.bin
-hello_durango.dux: rom.bin
+rom.bin: $(BUILD_DIR)/ $(BUILD_DIR)/hello_durango.o
+	ld65 $(LINKER_OPT) $(BUILD_DIR)/hello_durango.o $(LINKER_LIBS) -o rom.bin
+rom.dux.dux: rom.bin
 	java -jar ${RESCOMP} -m SIGNER -n MyDurangoProyect -t HELLO -d "HELLO DURANGO" -i rom.bin -o rom.dux
 
 $(BUILD_DIR)/:
