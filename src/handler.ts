@@ -3,6 +3,7 @@ import path = require("path");
 import * as vscode from "vscode";
 import * as DurangoConstants from "./DurangoConstants";
 import { platform } from "os";
+import { CommandData } from "./utils";
 
 /**
  * EXECUTION MODE:
@@ -54,14 +55,14 @@ export abstract class CommandHandler {
      */
     constructor(extensionPath: string) {
         this.extensionPath = extensionPath;
-        this.terminal = undefined;
+
         this.System = SYSTEM.UNKNOWN;
     }
 
     /**
      * Updates the current environmentVariables using current Configuration
      */
-    abstract setEnvironmentVariables(): void;
+    abstract getEnvironmentVariablesData(commandData: CommandData): string;
 
     /**
      * Send a file or program using VSP (Virtual Serial Port)
@@ -94,45 +95,23 @@ export abstract class CommandHandler {
 
     }
 
-    /**
-     * Gets the current Durango.code Terminal, or create a new One.
-     * @returns Current DurangoCode Terminal
-     */
-    protected getCurrentTerminal(): vscode.Terminal {
-        if (this.terminal == undefined) {
-            let terminals = vscode.window.terminals.filter(terminal => terminal.name === DurangoConstants.DURANGOCODE);
-            this.terminal = terminals.length > 0 ? terminals[0] : vscode.window.createTerminal(DurangoConstants.DURANGOCODE);
-        }
-        this.terminal.show(true);
-        return this.terminal;
-    }
 
-    /**
-     * Execute current command on Terminal
-     * @param command Command to be executed
-     * @param newLine Adds a new Line character at the end or not (for compose commands).
-     */
-    protected executeCommand(command: string, newLine: boolean = true) {
-        this.getCurrentTerminal().sendText(command, newLine);
-    }
     /**
      * Handle the Compile Project Command
      */
-    public compile(newLine: boolean = true): Boolean {
+    public compile(commandData: CommandData): string | undefined {
         let command: string | undefined = this.handleCommand(DurangoConstants.COMPILE, this.System);
-        //TODO: Execute command.
-        this.setEnvironmentVariables();
-        if (command !== undefined)
-            this.executeCommand(command, newLine);
-        return command !== undefined;
+
+        return command;
     }
+
 
     /**
      * Current Execution Mode From Configuration
      * @returns Get Current Execution Mode From Configuration
      */
-    protected getCurrentExecMode(): EXEC_MODE {
-        let execConfig = vscode.workspace.getConfiguration().get(DurangoConstants.EXECUTIONMODECONFIG, EXEC_MODE.PERDITA.toString());
+    protected getCurrentExecMode(commandData: CommandData): EXEC_MODE {
+        let execConfig = commandData.getData(DurangoConstants.EXECUTIONMODECONFIG, EXEC_MODE.PERDITA.toString());
 
         let execKey = execConfig as keyof typeof EXEC_MODE;
 
@@ -142,17 +121,11 @@ export abstract class CommandHandler {
     /**
      * Handle the Clean Project Command.
      */
-    public clean(): Boolean {
-        this.setEnvironmentVariables();
+    public clean(commandData: CommandData): string | undefined {
+       
         let command = this.handleCommand(DurangoConstants.CLEAN, this.System);
-        if (command) {
-            this.executeCommand(command);
-        }
-        return command !== undefined;
-    }
 
-    public compileAndRun(): Boolean {
-        return this.compile(false) && this.run(this.getCurrentExecMode(), true);
+        return command;
     }
 
     /**
@@ -160,17 +133,15 @@ export abstract class CommandHandler {
      * @param mode Run Execution Mode. @see EXEC_MODE
      * @param compose allow to compose with earlier command
      */
-    public run(mode: EXEC_MODE, compose: Boolean = false): Boolean {
-        if (compose) {
-            this.executeCommand(' && ', false);
-        }
+    public run(mode: EXEC_MODE, commandData: CommandData, compose: Boolean = false): string | undefined {
+
         let executable = "";
         switch (mode) {
             case EXEC_MODE.PERDITA:
-                executable = vscode.workspace.getConfiguration().get(DurangoConstants.PERDITAPATHCONFIG, "perdita");
+                executable = commandData.getData(DurangoConstants.PERDITAPATHCONFIG, "perdita");
                 break;
             case EXEC_MODE.NANOBOOT:
-                executable = vscode.workspace.getConfiguration().get(DurangoConstants.NANOBOOTPATHCONFIG, "nanoboot");
+                executable = commandData.getData(DurangoConstants.NANOBOOTPATHCONFIG, "nanoboot");
                 break;
         }
         let executeCommand: string | undefined = this.handleCommand(DurangoConstants.RUN, this.System);
@@ -178,39 +149,11 @@ export abstract class CommandHandler {
         executeCommand?.replace(DurangoConstants.EXECUTABLE, executable);
         //TODO: Review better implementation
         executeCommand?.replace("${romFile}", "bin/rom.dux");
-        if (executeCommand)
-            this.executeCommand(executeCommand);
-        return executeCommand !== undefined;
+
+        return executeCommand;
     }
 
-    /**
-     * Handle the Create Project Command
-     * @param projectPath Project Root Path
-     */
-    create(projectPath: string): Boolean {
-        mkdirSync(path.join(projectPath, "src"));
-        //main.c
-        let sourceMainCPath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
-            , "main.c.template");
-        let destinationPath = path.join(projectPath, "src", "main.c");
-        copyFileSync(sourceMainCPath, destinationPath);
-        //MakeFile
-        let sourceMakeFilePath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
-            , "Makefile.template");
-        let destinationMakeFilePath = path.join(projectPath, "Makefile");
-        copyFileSync(sourceMakeFilePath, destinationMakeFilePath);
-        //Readme
-        let sourceReadmePath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
-            , "Readme.md.template");
-        let destinationReadMePath = path.join(projectPath, "Readme.md");
-        copyFileSync(sourceReadmePath, destinationReadMePath);
-        //gitignore
-        let sourceGitIgnorePath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
-            , ".gitignore.template");
-        let destinationGitIgnorePath = path.join(projectPath, ".gitignore");
-        copyFileSync(sourceGitIgnorePath, destinationGitIgnorePath);
-        return true;
-    }
+
 
 };
 
@@ -230,17 +173,19 @@ export class CommandWHandler extends CommandHandler {
     }
 
 
-    setEnvironmentVariables(): void {
+    getEnvironmentVariablesData(commandData: CommandData): string {
         //Set DDK Variable
-        let DDKVariable = vscode.workspace.getConfiguration().get(DurangoConstants.DDK);
+        let command = "";
+        let DDKVariable = commandData.getData(DurangoConstants.DDK);
         if (DDKVariable) {
-            this.executeCommand(`set DDK="${DDKVariable}"`);
+            command += `set DDK="${DDKVariable}";`;
         }
         //Set custom RescompPath
-        let rescompPath = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
+        let rescompPath = commandData.getData(DurangoConstants.CUSTOMRESCOMP);
         if (rescompPath) {
-            this.executeCommand(`set DDK="${rescompPath}"`);
+            command += `set RESCOMP="${rescompPath}";`;
         }
+        return command;
     }
 
     sendVSP(filePath: String): Boolean {
@@ -262,17 +207,20 @@ export class CommandLHandler extends CommandHandler {
         this.System = SYSTEM.LINUX;
     }
 
-    setEnvironmentVariables(): void {
+    getEnvironmentVariablesData(commandData: CommandData): string {
+        let command = "";
         //Set DDK Variable
-        let DDKVariable = vscode.workspace.getConfiguration().get(DurangoConstants.DDK);
+        let DDKVariable = commandData.getData(DurangoConstants.DDK);
         if (DDKVariable) {
-            this.executeCommand(`export DDK="${DDKVariable}"`);
+            command += `export DDK="${DDKVariable}";`;
         }
-        let rescompPath = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
+        let rescompPath = commandData.getData(DurangoConstants.CUSTOMRESCOMP);
         if (rescompPath) {
-            this.executeCommand(`export DDK="${rescompPath}"`);
+            command += `export RESCOMP="${rescompPath}"`;
         }
+        return command;
     }
+
 
     sendVSP(filePath: String): Boolean {
         throw new Error("Method not implemented.");
@@ -301,6 +249,7 @@ export class CommandDHandler extends CommandLHandler {
  * Command Handler For Docker based Systems
  */
 export class CommandDockerHandler extends CommandHandler {
+   
 
     /**
      * Platform used (based on os.Platform() function)
@@ -322,24 +271,22 @@ export class CommandDockerHandler extends CommandHandler {
      * @param newLine Add a new Line at the end of the command
      * @returns True if the command Was Successful
      */
-    public compile(newLine: boolean = true): Boolean {
+    public compile(commandData: CommandData): string|undefined {
         let command = this.handleCommand(DurangoConstants.COMPILE, this.System);
-        command=this.ComposeCommandDocker(command);
-        if (command)
-            this.executeCommand(command, newLine);
-        return command !== undefined;
+        command = this.ComposeCommandDocker(command, commandData);
+       
+        return command;
     }
 
     /**
      * Clean Command for Docker based Systems
      * @returns True if the command Was Successful
      */
-    public clean():Boolean{
+    public clean(commandData: CommandData): string|undefined {
         let command = this.handleCommand(DurangoConstants.CLEAN, this.System);
-        command=this.ComposeCommandDocker(command);
-        if (command)
-            this.executeCommand(command, true);
-        return command !== undefined;
+        command = this.ComposeCommandDocker(command, commandData);
+       
+        return command;
     }
 
     /**
@@ -347,7 +294,7 @@ export class CommandDockerHandler extends CommandHandler {
      * @param command Command to be composed with the replacements
      * @returns Command with replacements
      */
-    private ComposeCommandDocker(command:string|undefined):string|undefined{
+    private ComposeCommandDocker(command: string | undefined, commandData: CommandData): string | undefined {
         let currPath = '"$PWD"';
         //In case of windows use %CD% for volume creation
         if (this.platform === 'win32') {
@@ -357,26 +304,27 @@ export class CommandDockerHandler extends CommandHandler {
         //Environment Variables
         let environmentVar = "";
         //Set DDK Variable
-        let DDKVariable = vscode.workspace.getConfiguration().get(DurangoConstants.DDK);
+        let DDKVariable = commandData.getData(DurangoConstants.DDK);
         if (DDKVariable) {
             environmentVar += ` --env DDK=${DDKVariable}`;
         }
         //Set custom RescompPath
-        let rescompPath = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
+        let rescompPath = commandData.getData(DurangoConstants.CUSTOMRESCOMP);
         if (rescompPath) {
             environmentVar += ` --env RESCOMP=${rescompPath}`;
         }
-        let DockerImageName = vscode.workspace.getConfiguration().get(DurangoConstants.DOCKERTAG, DurangoConstants.DEFAULTTAG);
+        let DockerImageName = commandData.getData(DurangoConstants.DOCKERTAG, DurangoConstants.DEFAULTTAG);
         command = command?.replace(/{{currentPath}}/g, currPath)
-        .replace(/{{envVariables}}/, environmentVar)
-        .replace(/{{dockerTag}}/, DockerImageName);
+            .replace(/{{envVariables}}/, environmentVar)
+            .replace(/{{dockerTag}}/, DockerImageName);
 
         return command;
     }
 
-    setEnvironmentVariables(): void {
-        throw new Error("Method not valid for Docker");
+    getEnvironmentVariablesData(commandData: CommandData): string {
+        throw new Error("Method not valid for Docker");    
     }
+       
     sendVSP(filePath: String): Boolean {
         throw new Error("Method not implemented.");
     }
