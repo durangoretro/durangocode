@@ -12,7 +12,7 @@ import { CommandData } from "./utils";
  */
 export enum EXEC_MODE {
     /**Perdita Emulator */
-    PERDITA,
+    Emulator,
     /**Run Using NanoBoot */
     NANOBOOT
 };
@@ -21,10 +21,25 @@ export enum EXEC_MODE {
  * Current System Configuration
  */
 export enum SYSTEM {
+    /**
+     * Windows (win32)
+     */
     WINDOWS = "w",
+    /**
+     * Linux
+     */
     LINUX = "l",
+    /**
+     * Darwin
+     */
     DARWIN = "d",
+    /**
+     * Docker
+     */
     DOCKER = "docker",
+    /**
+     * Unknow System
+     */
     UNKNOWN = "UNKNOWN"
 };
 
@@ -60,7 +75,10 @@ export abstract class CommandHandler {
     }
 
     /**
-     * Updates the current environmentVariables using current Configuration
+     * get the current environmentVariables and returns the composed Command
+     * 
+     * @param commandData Command Data with all the Command Parameters
+     * @returns Composed EnvironMent Variables commands.
      */
     abstract getEnvironmentVariablesData(commandData: CommandData): string;
 
@@ -80,7 +98,7 @@ export abstract class CommandHandler {
      * 
      * @param commandName command Name.
      * @param system System used. @see SYSTEM
-     * @returns True if the command was successfully handled
+     * @returns The current Command
      */
     protected handleCommand(commandName: string, system: SYSTEM): string | undefined {
 
@@ -98,6 +116,10 @@ export abstract class CommandHandler {
 
     /**
      * Handle the Compile Project Command
+     * 
+     * @param commandData Command Data With all the replace Parameters
+     * 
+     * @returns Composed Command
      */
     public compile(commandData: CommandData): string | undefined {
         let command: string | undefined = this.handleCommand(DurangoConstants.COMPILE, this.System);
@@ -110,45 +132,51 @@ export abstract class CommandHandler {
      * Current Execution Mode From Configuration
      * @returns Get Current Execution Mode From Configuration
      */
-    protected getCurrentExecMode(commandData: CommandData): EXEC_MODE {
-        let execConfig = commandData.getData(DurangoConstants.EXECUTIONMODECONFIG, EXEC_MODE.PERDITA.toString());
+    protected getCurrentExecutable(commandData: CommandData): string | undefined {
 
+        let execConfig = commandData.getData(DurangoConstants.EXECUTIONMODECONFIG);
         let execKey = execConfig as keyof typeof EXEC_MODE;
 
-        return EXEC_MODE[execKey];
-    }
-
-    /**
-     * Handle the Clean Project Command.
-     */
-    public clean(commandData: CommandData): string | undefined {
-       
-        let command = this.handleCommand(DurangoConstants.CLEAN, this.System);
-
-        return command;
-    }
-
-    /**
-     * Handle the Run Commands Handle
-     * @param mode Run Execution Mode. @see EXEC_MODE
-     * @param compose allow to compose with earlier command
-     */
-    public run(mode: EXEC_MODE, commandData: CommandData, compose: Boolean = false): string | undefined {
-
         let executable = "";
-        switch (mode) {
-            case EXEC_MODE.PERDITA:
+        let execMode = EXEC_MODE[execKey];
+        switch (execMode) {
+            case EXEC_MODE.Emulator:
                 executable = commandData.getData(DurangoConstants.PERDITAPATHCONFIG, "perdita");
                 break;
             case EXEC_MODE.NANOBOOT:
                 executable = commandData.getData(DurangoConstants.NANOBOOTPATHCONFIG, "nanoboot");
                 break;
         }
-        let executeCommand: string | undefined = this.handleCommand(DurangoConstants.RUN, this.System);
+        return executable;
+    }
 
-        executeCommand?.replace(DurangoConstants.EXECUTABLE, executable);
-        //TODO: Review better implementation
-        executeCommand?.replace("${romFile}", "bin/rom.dux");
+    /**
+     * Handle the Clean Project Command.
+     * 
+     * @param commandData commandData with all the required Parameters to be replaced
+     * 
+     * @returns Composed Command
+     */
+    public clean(commandData: CommandData): string | undefined {
+
+        let command = this.handleCommand(DurangoConstants.CLEAN, this.System);
+
+        return command;
+    }
+
+    /**
+     * Handle the Run Commands Handle.
+     * @param commandData command Data with all the parameters
+     * @param compose allow to compose with earlier command
+     */
+    public run(commandData: CommandData, compose: Boolean): string | undefined {
+
+        let executable = this.getCurrentExecutable(commandData);
+
+        let executeCommand: string | undefined = this.handleCommand(DurangoConstants.RUN, this.System);
+        if (executable)
+            executeCommand = executeCommand?.replace(/{{executable}}/, executable)
+                .replace(/{{romFile}}/, "bin/rom.dux");
 
         return executeCommand;
     }
@@ -216,7 +244,7 @@ export class CommandLHandler extends CommandHandler {
         }
         let rescompPath = commandData.getData(DurangoConstants.CUSTOMRESCOMP);
         if (rescompPath) {
-            command += `export RESCOMP="${rescompPath}"`;
+            command += `export RESCOMP="${rescompPath}";`;
         }
         return command;
     }
@@ -249,7 +277,7 @@ export class CommandDHandler extends CommandLHandler {
  * Command Handler For Docker based Systems
  */
 export class CommandDockerHandler extends CommandHandler {
-   
+
 
     /**
      * Platform used (based on os.Platform() function)
@@ -260,10 +288,10 @@ export class CommandDockerHandler extends CommandHandler {
      * Default Constructor
      * @param extensionPath Extension Path
      */
-    public constructor(extensionPath: string) {
+    public constructor(extensionPath: string, platform: string) {
         super(extensionPath);
         this.System = SYSTEM.DOCKER;
-        this.platform = platform().toString();
+        this.platform = platform
     }
 
     /**
@@ -271,10 +299,10 @@ export class CommandDockerHandler extends CommandHandler {
      * @param newLine Add a new Line at the end of the command
      * @returns True if the command Was Successful
      */
-    public compile(commandData: CommandData): string|undefined {
+    public compile(commandData: CommandData): string | undefined {
         let command = this.handleCommand(DurangoConstants.COMPILE, this.System);
         command = this.ComposeCommandDocker(command, commandData);
-       
+
         return command;
     }
 
@@ -282,10 +310,10 @@ export class CommandDockerHandler extends CommandHandler {
      * Clean Command for Docker based Systems
      * @returns True if the command Was Successful
      */
-    public clean(commandData: CommandData): string|undefined {
+    public clean(commandData: CommandData): string | undefined {
         let command = this.handleCommand(DurangoConstants.CLEAN, this.System);
         command = this.ComposeCommandDocker(command, commandData);
-       
+
         return command;
     }
 
@@ -322,9 +350,26 @@ export class CommandDockerHandler extends CommandHandler {
     }
 
     getEnvironmentVariablesData(commandData: CommandData): string {
-        throw new Error("Method not valid for Docker");    
+        throw new Error("Method not valid for Docker");
     }
-       
+
+    public run(commandData: CommandData, compose: Boolean): string | undefined {
+
+        return (this.platform === 'win32') ? this.composeRunDockerWin32(commandData, compose) : super.run(commandData, compose);
+    }
+    private composeRunDockerWin32(commandData: CommandData, compose: Boolean = false): string | undefined {
+        let command: string | undefined = "";
+        if (compose) {
+            command += " && "
+        }
+        let executable = this.getCurrentExecutable(commandData)
+        if (executable)
+            command = this.handleCommand(DurangoConstants.RUN, SYSTEM.WINDOWS)
+                ?.replace(/{{executable}}/, executable)
+                ?.replace(/{{romFile}}/, "bin/rom.dux");
+ 
+        return command;
+    }
     sendVSP(filePath: String): Boolean {
         throw new Error("Method not implemented.");
     }

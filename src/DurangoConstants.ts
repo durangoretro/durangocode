@@ -44,3 +44,5 @@ export const NATIVE = 'Native';
 export const DOCKER = 'Docker';
 
 export const DEFAULTTAG='zerasul/durangodevkit';
+
+export const DEFAULTEXECMODE="Emulator";

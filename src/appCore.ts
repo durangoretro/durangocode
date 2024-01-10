@@ -23,7 +23,7 @@ export class AppCore {
      */
     private commandHandler;
 
-    private docker:boolean=false;
+    private docker: boolean = false;
 
     /**
      * Class Constructor. This Constructor Builds the CommandHandler for each System; depending
@@ -34,8 +34,9 @@ export class AppCore {
 
         this.extensionPath = extensionPath;
         let toolchainType = vscode.workspace.getConfiguration().get(DurangoConstants.TOOLCHAINTYPE, DurangoConstants.NATIVE);
+        let platfrm = platform().toString();
         if (toolchainType === DurangoConstants.NATIVE) {
-            switch (platform().toString()) {
+            switch (platfrm) {
                 case "win32":
                     this.commandHandler = new CommandWHandler(extensionPath);
                     break;
@@ -49,8 +50,8 @@ export class AppCore {
                     throw Error("UnSupported Platform");
             }
         } else {
-            this.commandHandler = new CommandDockerHandler(extensionPath);
-            this.docker=true;
+            this.commandHandler = new CommandDockerHandler(extensionPath, platfrm);
+            this.docker = true;
         }
         this.terminal = undefined;
     }
@@ -61,60 +62,103 @@ export class AppCore {
      * @returns 
      */
     public createProject(currentPath: vscode.Uri): vscode.Uri | undefined {
-        
-    }
-        /**
-      * Handle the Create Project Command
-      * @param projectPath Project Root Path
-      */
-        create(projectPath: string): Boolean {
 
-            mkdirSync(path.join(projectPath, "src"));
-            //main.c
-            let sourceMainCPath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
-                , "main.c.template");
-            let destinationPath = path.join(projectPath, "src", "main.c");
-            copyFileSync(sourceMainCPath, destinationPath);
-            //MakeFile
-            let sourceMakeFilePath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
-                , "Makefile.template");
-            let destinationMakeFilePath = path.join(projectPath, "Makefile");
-            copyFileSync(sourceMakeFilePath, destinationMakeFilePath);
-            //Readme
-            let sourceReadmePath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
-                , "Readme.md.template");
-            let destinationReadMePath = path.join(projectPath, "Readme.md");
-            copyFileSync(sourceReadmePath, destinationReadMePath);
-            //gitignore
-            let sourceGitIgnorePath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
-                , ".gitignore.template");
-            let destinationGitIgnorePath = path.join(projectPath, ".gitignore");
-            copyFileSync(sourceGitIgnorePath, destinationGitIgnorePath);
-            return true;
+        return (this.create(currentPath.toString())) ? currentPath : undefined;
+    }
+
+    /**
+     * Handle the Create Project Command
+     * @param projectPath Project Root Path
+     */
+    create(projectPath: string): Boolean {
+
+        mkdirSync(path.join(projectPath, "src"));
+        //main.c
+        let sourceMainCPath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
+            , "main.c.template");
+        let destinationPath = path.join(projectPath, "src", "main.c");
+        copyFileSync(sourceMainCPath, destinationPath);
+        //MakeFile
+        let sourceMakeFilePath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
+            , "Makefile.template");
+        let destinationMakeFilePath = path.join(projectPath, "Makefile");
+        copyFileSync(sourceMakeFilePath, destinationMakeFilePath);
+        //Readme
+        let sourceReadmePath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
+            , "Readme.md.template");
+        let destinationReadMePath = path.join(projectPath, "Readme.md");
+        copyFileSync(sourceReadmePath, destinationReadMePath);
+        //gitignore
+        let sourceGitIgnorePath = path.join(this.extensionPath, DurangoConstants.RESOURCESDIR, DurangoConstants.TEMPLATEDIR
+            , ".gitignore.template");
+        let destinationGitIgnorePath = path.join(projectPath, ".gitignore");
+        copyFileSync(sourceGitIgnorePath, destinationGitIgnorePath);
+        return true;
+    }
+
+
+    private compileWithLine(newLine:boolean){
+        let ddKConfig = vscode.workspace.getConfiguration().get(DurangoConstants.DDK);
+        let rescompConfig = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
+        let data: any;
+        data[DurangoConstants.DDK] = ddKConfig;
+        data[DurangoConstants.CUSTOMRESCOMP] = rescompConfig;
+        let customEnvVariables = this.commandHandler.getEnvironmentVariablesData(new CommandData(data));
+        if (this.docker) {
+            data[DurangoConstants.DOCKERTAG] = vscode.workspace.getConfiguration().get(DurangoConstants.DOCKERTAG);
+            data[DurangoConstants.CUSTOMRESCOMP] = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
+        } else {
+            this.executeCommand(customEnvVariables);
         }
-    
+
+        let compileCommand = this.commandHandler.compile(new CommandData(data));
+        if (compileCommand)
+            this.executeCommand(compileCommand, newLine);
+    }
 
     /**
      * Call the Compile Operation
      */
     public compile() {
-        let ddKConfig = vscode.workspace.getConfiguration().get(DurangoConstants.DDK);
-        let rescompConfig = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
-        let data:any;
-        data[DurangoConstants.DDK]=ddKConfig;
-        data[DurangoConstants.CUSTOMRESCOMP]=rescompConfig;
-        let customEnvVariables = this.commandHandler.getEnvironmentVariablesData(new CommandData(data));
-        if(this.docker){
-            data[DurangoConstants.DOCKERTAG]=vscode.workspace.getConfiguration().get(DurangoConstants.DOCKERTAG);
-        }
-        let compileCommand = this.commandHandler.compile()
+        this.compileWithLine(true);
     }
 
     /**
      * Call the Clean Operation
      */
     public clean() {
-        this.commandHandler?.clean();
+        let ddKConfig = vscode.workspace.getConfiguration().get(DurangoConstants.DDK);
+        let rescompConfig = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
+        let data: any;
+        data[DurangoConstants.DDK] = ddKConfig;
+        data[DurangoConstants.CUSTOMRESCOMP] = rescompConfig;
+        let customEnvVariables = this.commandHandler.getEnvironmentVariablesData(new CommandData(data));
+        if (this.docker) {
+            data[DurangoConstants.DOCKERTAG] = vscode.workspace.getConfiguration().get(DurangoConstants.DOCKERTAG);
+            data[DurangoConstants.CUSTOMRESCOMP] = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
+        } else {
+            this.executeCommand(customEnvVariables);
+        }
+        this.commandHandler?.clean(new CommandData(data));
+    }
+
+    private composeRun(compose:Boolean=false){
+        let data:any=[];
+        data[DurangoConstants.EXECUTIONMODECONFIG]= vscode.workspace.getConfiguration().get(DurangoConstants.EXECUTIONMODECONFIG);
+        
+        let runCommand = this.commandHandler.run(new CommandData(data),compose);
+        if(runCommand)
+            this.executeCommand(runCommand,true);
+        
+    }
+
+    public run(){
+        this.composeRun();
+    }
+
+    public compileAndRun(){
+        this.compileWithLine(false);
+        this.composeRun(true);
     }
 
     /**

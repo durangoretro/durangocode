@@ -13,10 +13,10 @@
                 "docker":"docker run --rm -v {{currentPath}}:/src/durango {{envVariables}} {{dockerTag}} make clean"
         },
         "run": {
-            "w": "START \\B ${executable} \"${romFile)\"",
-            "l": "${executable} \"${romFile)\" &",
-            "d": "${executable} \"${romFile)\" &",
-            "docker": "${executable} \"${romFile)\" &"
+            "w": "START \\B {{executable}} \"{{romFile}}\"",
+            "l": "{{executable}} \"{{romFile}}\" &",
+            "d": "{{executable}} \"{{romFile}}\" &",
+            "docker": "{{executable}} \"{{romFile}}\" &"
         }
     }
 }
