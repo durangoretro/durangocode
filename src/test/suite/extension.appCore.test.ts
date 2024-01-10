@@ -31,4 +31,10 @@ suite('AppCore Test', () => {
         assert.strictEqual(terminal.name, DurangoConstants.DURANGOCODE);
         terminal.hide();
     });
+    test('Test Run', () => {
+        appCore.run();
+        let terminal = getTerminal();
+        assert.strictEqual(terminal.name, DurangoConstants.DURANGOCODE);
+        terminal.hide();
+    });
 });
