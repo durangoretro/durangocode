@@ -98,15 +98,15 @@ export class AppCore {
 
 
     private compileWithLine(newLine:boolean){
-        let ddKConfig = vscode.workspace.getConfiguration().get(DurangoConstants.DDK);
+        let ddKConfig = vscode.workspace.getConfiguration().get(DurangoConstants.DDK)
         let rescompConfig = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
-        let data: any;
+        console.log(rescompConfig);
+        let data:any = {};
         data[DurangoConstants.DDK] = ddKConfig;
         data[DurangoConstants.CUSTOMRESCOMP] = rescompConfig;
         let customEnvVariables = this.commandHandler.getEnvironmentVariablesData(new CommandData(data));
         if (this.docker) {
             data[DurangoConstants.DOCKERTAG] = vscode.workspace.getConfiguration().get(DurangoConstants.DOCKERTAG);
-            data[DurangoConstants.CUSTOMRESCOMP] = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
         } else {
             this.executeCommand(customEnvVariables);
         }
@@ -129,7 +129,7 @@ export class AppCore {
     public clean() {
         let ddKConfig = vscode.workspace.getConfiguration().get(DurangoConstants.DDK);
         let rescompConfig = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
-        let data: any;
+        let data: any={};
         data[DurangoConstants.DDK] = ddKConfig;
         data[DurangoConstants.CUSTOMRESCOMP] = rescompConfig;
         let customEnvVariables = this.commandHandler.getEnvironmentVariablesData(new CommandData(data));
@@ -143,7 +143,7 @@ export class AppCore {
     }
 
     private composeRun(compose:Boolean=false){
-        let data:any=[];
+        let data:any={};
         data[DurangoConstants.EXECUTIONMODECONFIG]= vscode.workspace.getConfiguration().get(DurangoConstants.EXECUTIONMODECONFIG);
         
         let runCommand = this.commandHandler.run(new CommandData(data),compose);
