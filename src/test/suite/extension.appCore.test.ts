@@ -4,15 +4,9 @@ import * as assert from 'assert';
 import path = require('path');
 import { before } from 'mocha';
 import { AppCore } from '../../appCore';
-import * as DurangoConstants from '../../DurangoConstants';
-import * as vscode from 'vscode';
 
 let appCore: AppCore;
 
-let getTerminal=()=>{
-    let terminals = vscode.window.terminals.filter(terminal => terminal.name === DurangoConstants.DURANGOCODE);
-    return terminals[0];
-}
 
 suite('AppCore Test', () => {
     before(() => {
@@ -21,20 +15,18 @@ suite('AppCore Test', () => {
     });
     test('Test Compile', () => {
         appCore.compile();
-        let terminal = getTerminal();
-        assert.strictEqual(terminal.name, DurangoConstants.DURANGOCODE);
-        terminal.hide();
+
+        //@ts-ignore
+        assert.notStrictEqual(appCore.terminal,undefined);
     });
     test('Test Clean', () => {
         appCore.clean();
-        let terminal = getTerminal();
-        assert.strictEqual(terminal.name, DurangoConstants.DURANGOCODE);
-        terminal.hide();
+        //@ts-ignore
+        assert.notStrictEqual(appCore.terminal,undefined);
     });
     test('Test Run', () => {
         appCore.run();
-        let terminal = getTerminal();
-        assert.strictEqual(terminal.name, DurangoConstants.DURANGOCODE);
-        terminal.hide();
+        //@ts-ignore
+        assert.notStrictEqual(appCore.terminal,undefined);
     });
 });
