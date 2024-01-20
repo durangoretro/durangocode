@@ -2,11 +2,20 @@
   "name": "durango-code",
   "displayName": "Durango Code",
   "description": "Durango Computer Development Extension For VSCode",
+  "publisher": "Zerasul",
+  "icon": "imgs/durangoicon.png",
+  "keywords": [
+    "durango",
+    "6502",
+    "retro",
+    "programming"
+  ],
   "version": "1.0.0",
   "engines": {
     "vscode": "^1.75.0"
   },
   "categories": [
+    "Programming Languages",
     "Other"
   ],
   "activationEvents": [],
@@ -113,5 +122,9 @@
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
     "typescript": "^4.7.4"
-  }
+  },
+  "author": {"name": "Durango Computer Team",
+"url": "https://durangoretro.com"},
+"bugs": {"url": "https://github.com/durangoretro/durangocode/issues"},
+"repository": {"url": "https://github.com/durangoretro/durangocode/"}
 }
