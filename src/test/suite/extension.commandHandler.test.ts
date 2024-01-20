@@ -14,29 +14,31 @@ import { before } from 'mocha';
 let data:any={
 	"DDK": "/opt/DurangoLib",
 	"CustomRescompJar": "/opt/DurangoLib/rescomp/rescomp.jar",
-	"ExecutionMode" : "Emulator"
+	"ExecutionMode" : "Emulator",
+	"executable": "perdita",
+	"romLocation": "rom.dux"
 };
 let commandHandler:handler.CommandHandler;
 
 let Commands={
 	"compileW": "make",
 	"cleanW": "make clean",
-	"runW": "START \\B perdita \"bin/rom.dux\"",
+	"runW": "START \\B perdita \"rom.dux\"",
 	"envVarW": "set DDK=\"/opt/DurangoLib\";set RESCOMP=\"/opt/DurangoLib/rescomp/rescomp.jar\";",
 	//Linux
 	"compileL": "make",
 	"cleanL": "make clean",
-	"runL": "perdita \"bin/rom.dux\" &",
+	"runL": "perdita \"rom.dux\" &",
 	"envVarL": "export DDK=\"/opt/DurangoLib\";export RESCOMP=\"/opt/DurangoLib/rescomp/rescomp.jar\";",
 	//Darwin (MacOs)
 	"compileD": "make",
 	"cleanD": "make clean",
-	"runD": "perdita \"bin/rom.dux\" &",
+	"runD": "perdita \"rom.dux\" &",
 	"envVarD": "export DDK=\"/opt/DurangoLib\";export RESCOMP=\"/opt/DurangoLib/rescomp/rescomp.jar\";",
 	//Docker
 	"compileDocker": "docker run --rm -v \"%CD%\":/src/durango  --env DDK=/opt/DurangoLib --env RESCOMP=/opt/DurangoLib/rescomp/rescomp.jar zerasul/durangodevkit",
 	"cleanDocker": "docker run --rm -v \"%CD%\":/src/durango  --env DDK=/opt/DurangoLib --env RESCOMP=/opt/DurangoLib/rescomp/rescomp.jar zerasul/durangodevkit make clean",
-	"runDocker": "START \\B perdita \"bin/rom.dux\""
+	"runDocker": "START \\B perdita \"rom.dux\""
 };
 
 suite('Handle Windows Commands Suite Test', () => {

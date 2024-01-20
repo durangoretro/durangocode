@@ -343,10 +343,11 @@ export class CommandDockerHandler extends CommandHandler {
             command += " && "
         }
         let executable = this.getCurrentExecutable(commandData)
+        let romLocation = commandData.getData(DurangoConstants.ROMLOCATION);
         if (executable)
             command = this.handleCommand(DurangoConstants.RUN, SYSTEM.WINDOWS)
                 ?.replace(/{{executable}}/, executable)
-                ?.replace(/{{romFile}}/, "bin/rom.dux");
+                ?.replace(/{{romFile}}/, romLocation);
  
         return command;
     }
