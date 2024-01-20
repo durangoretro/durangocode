@@ -1,5 +1,7 @@
 # Durango Code
 
+[![.github/workflows/ci.yml](https://github.com/durangoretro/durangocode/actions/workflows/ci.yml/badge.svg)](https://github.com/durangoretro/durangocode/actions/workflows/ci.yml)
+
 Durango Code is a Visual Studio Code extension, for use to development for [Durango Retro Project](https://durangoretro.com) this extension allows to configure and works for create new software for the Durango Platform.
 
 This extension uses the Durango Development Tools and CC65 suite for create new software; you can check all the documentation for these tools on the next address:
