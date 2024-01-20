@@ -1,4 +1,4 @@
-# durango-code README
+# Durango Code
 
 Durango Code is a Visual Studio Code extension, for use to development for [Durango Retro Project](https://durangoretro.com) this extension allows to configure and works for create new software for the Durango Platform.
 
