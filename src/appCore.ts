@@ -110,17 +110,17 @@ export class AppCore {
     }
 
 
-    private compileWithLine(newLine:boolean){
+    private compileWithLine(newLine: boolean) {
         let ddKConfig = vscode.workspace.getConfiguration().get(DurangoConstants.DDK)
         let rescompConfig = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
-        let data:any = {};
+        let data: any = {};
         data[DurangoConstants.DDK] = ddKConfig;
         data[DurangoConstants.CUSTOMRESCOMP] = rescompConfig;
         let customEnvVariables = this.commandHandler.getEnvironmentVariablesData(new CommandData(data));
         if (this.docker) {
             data[DurangoConstants.DOCKERTAG] = vscode.workspace.getConfiguration().get(DurangoConstants.DOCKERTAG);
         } else {
-            this.executeCommand(customEnvVariables,newLine);
+            this.executeCommand(customEnvVariables, newLine);
         }
 
         let compileCommand = this.commandHandler.compile(new CommandData(data));
@@ -141,7 +141,7 @@ export class AppCore {
     public clean() {
         let ddKConfig = vscode.workspace.getConfiguration().get(DurangoConstants.DDK);
         let rescompConfig = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
-        let data: any={};
+        let data: any = {};
         data[DurangoConstants.DDK] = ddKConfig;
         data[DurangoConstants.CUSTOMRESCOMP] = rescompConfig;
         let customEnvVariables = this.commandHandler.getEnvironmentVariablesData(new CommandData(data));
@@ -151,39 +151,39 @@ export class AppCore {
         } else {
             this.executeCommand(customEnvVariables);
         }
-        let cleanCommand =  this.commandHandler?.clean(new CommandData(data));
-        if(cleanCommand){
+        let cleanCommand = this.commandHandler?.clean(new CommandData(data));
+        if (cleanCommand) {
             this.executeCommand(cleanCommand);
         }
     }
 
-    private composeRun(execMode:EXEC_MODE,compose:Boolean=false){
-       let runCommand="";
-        if(compose){
-            runCommand+=" && ";
-       }
-        let data:any={};
-        let executable:string|undefined="";
-        switch(execMode){
+    private composeRun(execMode: EXEC_MODE, compose: Boolean = false) {
+        let runCommand = "";
+        if (compose) {
+            runCommand += " && ";
+        }
+        let data: any = {};
+        let executable: string | undefined = "";
+        switch (execMode) {
             case EXEC_MODE.Emulator:
-                executable=vscode.workspace.getConfiguration().get(DurangoConstants.PERDITAPATHCONFIG);
+                executable = vscode.workspace.getConfiguration().get(DurangoConstants.PERDITAPATHCONFIG);
                 break;
             case EXEC_MODE.NANOBOOT:
-                executable=vscode.workspace.getConfiguration().get(DurangoConstants.NANOBOOTPATHCONFIG);
+                executable = vscode.workspace.getConfiguration().get(DurangoConstants.NANOBOOTPATHCONFIG);
                 break;
         }
-        data[DurangoConstants.EXECUTABLE]=executable;
-        data[DurangoConstants.ROMLOCATION]=vscode.workspace.getConfiguration().get(DurangoConstants.ROMLOCATION);
-        runCommand += this.commandHandler.run(new CommandData(data),compose);
-        if(runCommand)
-            this.executeCommand(runCommand,true);
-        
+        data[DurangoConstants.EXECUTABLE] = executable;
+        data[DurangoConstants.ROMLOCATION] = vscode.workspace.getConfiguration().get(DurangoConstants.ROMLOCATION);
+        runCommand += this.commandHandler.run(new CommandData(data), compose);
+        if (runCommand)
+            this.executeCommand(runCommand, true);
+
     }
     /**
      * Run the generated ROM on an emulator or using NanoBoot on Raspberry Pi
      * @param execMode Execution Mode emulator or using nanoboot @see EXEC_MODE
      */
-    public run(execMode:EXEC_MODE){
+    public run(execMode: EXEC_MODE) {
         this.composeRun(execMode);
     }
 
@@ -191,9 +191,9 @@ export class AppCore {
      * Compile the project and later run the generated Rom using an emulator or nanoboot
      * @param execMode Execution Mode using an Emulator or using Nano Boot @see EXEC_MODE
      */
-    public compileAndRun(execMode:EXEC_MODE){
+    public compileAndRun(execMode: EXEC_MODE) {
         this.compileWithLine(false);
-        this.composeRun(execMode,true);
+        this.composeRun(execMode, true);
     }
 
     /**

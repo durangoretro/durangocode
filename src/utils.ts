@@ -1,19 +1,19 @@
 /**
  * Command Data Utility Class
  */
-export class CommandData{
+export class CommandData {
 
     /**
      * Data to be stored
      */
-    private data:any;
+    private data: any;
 
     /**
      * Class Constructor
      * @param data data for copy
      */
-    public constructor(data:any=[]){
-        this.data=data;
+    public constructor(data: any = []) {
+        this.data = data;
     }
 
     /**
@@ -22,9 +22,9 @@ export class CommandData{
      * @param defaultData Default data in case there is no key (undefined by default).
      * @returns the content data or the default data otherwise
      */
-    public getData(key:string,defaultData:any=undefined){
+    public getData(key: string, defaultData: any = undefined) {
         let content = this.data[key];
 
-        return content?content:defaultData;
+        return content ? content : defaultData;
     }
 };

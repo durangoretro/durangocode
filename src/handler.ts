@@ -125,7 +125,7 @@ export abstract class CommandHandler {
     protected getCurrentExecutable(commandData: CommandData): string | undefined {
 
         let executable = commandData.getData(DurangoConstants.EXECUTABLE, "perdita");
-        
+
         return executable;
     }
 
@@ -348,7 +348,7 @@ export class CommandDockerHandler extends CommandHandler {
             command = this.handleCommand(DurangoConstants.RUN, SYSTEM.WINDOWS)
                 ?.replace(/{{executable}}/, executable)
                 ?.replace(/{{romFile}}/, romLocation);
- 
+
         return command;
     }
     sendVSP(filePath: String): Boolean {

@@ -17,16 +17,16 @@ suite('AppCore Test', () => {
         appCore.compile();
 
         //@ts-ignore
-        assert.notStrictEqual(appCore.terminal,undefined);
+        assert.notStrictEqual(appCore.terminal, undefined);
     });
     test('Test Clean', () => {
         appCore.clean();
         //@ts-ignore
-        assert.notStrictEqual(appCore.terminal,undefined);
+        assert.notStrictEqual(appCore.terminal, undefined);
     });
     test('Test Run', () => {
         appCore.run(EXEC_MODE.Emulator);
         //@ts-ignore
-        assert.notStrictEqual(appCore.terminal,undefined);
+        assert.notStrictEqual(appCore.terminal, undefined);
     });
 });

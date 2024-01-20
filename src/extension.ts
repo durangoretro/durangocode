@@ -3,13 +3,13 @@
 import * as vscode from 'vscode';
 import { AppCore, EXEC_MODE } from './appCore';
 
-let appCore:AppCore;
+let appCore: AppCore;
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	
+
 	//AppCore
-	appCore=new AppCore(context.extensionPath);
+	appCore = new AppCore(context.extensionPath);
 
 
 	//Compile Command
@@ -20,36 +20,36 @@ export function activate(context: vscode.ExtensionContext) {
 	//Create Project Command
 	let disposableCreate = vscode.commands.registerCommand('durango-code.create-project', () => {
 		vscode.window.showOpenDialog({
-			canSelectFiles:false,
+			canSelectFiles: false,
 			canSelectFolders: true,
 			canSelectMany: false
-		}).then(r =>{
-			if(r!==undefined){
-				let projectPath=appCore.createProject(r[0]);
-				if(projectPath)
-					vscode.commands.executeCommand('vscode.openFolder',projectPath);
+		}).then(r => {
+			if (r !== undefined) {
+				let projectPath = appCore.createProject(r[0]);
+				if (projectPath)
+					vscode.commands.executeCommand('vscode.openFolder', projectPath);
 			}
 		});
 	});
 	//Compile And Run (On Emulator)
-	let disposableCompileAndRun = vscode.commands.registerCommand('durango-code.compile-and-run-project',()=>{
+	let disposableCompileAndRun = vscode.commands.registerCommand('durango-code.compile-and-run-project', () => {
 		appCore.compileAndRun(EXEC_MODE.Emulator);
 	});
 
 	/**
 	 * Clean Command
 	 */
-	let disposableClean = vscode.commands.registerCommand('durango-code.clean-project',()=>{
+	let disposableClean = vscode.commands.registerCommand('durango-code.clean-project', () => {
 		appCore.clean();
 	});
 
 	// Run on an emulator (perdita)
-	let disposableRunEmulator = vscode.commands.registerCommand('durango-code.run-project', () =>{
+	let disposableRunEmulator = vscode.commands.registerCommand('durango-code.run-project', () => {
 		appCore.run(EXEC_MODE.Emulator);
 	});
 
 	//Run using NanoBoot
-	let disposableRunNanoboot= vscode.commands.registerCommand('durango-code.run-nanoboot', ()=>{
+	let disposableRunNanoboot = vscode.commands.registerCommand('durango-code.run-nanoboot', () => {
 		appCore.run(EXEC_MODE.NANOBOOT);
 	});
 
@@ -62,4 +62,4 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }

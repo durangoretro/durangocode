@@ -6,21 +6,21 @@ import * as vscode from 'vscode';
 import * as handler from '../../handler';
 import path = require('path');
 import * as fs from 'fs';
-import {tmpdir} from "os";
+import { tmpdir } from "os";
 import { CommandData } from '../../utils';
 import { before } from 'mocha';
 
 // import * as myExtension from '../../extension';
-let data:any={
+let data: any = {
 	"DDK": "/opt/DurangoLib",
 	"CustomRescompJar": "/opt/DurangoLib/rescomp/rescomp.jar",
-	"ExecutionMode" : "Emulator",
+	"ExecutionMode": "Emulator",
 	"executable": "perdita",
 	"romLocation": "rom.dux"
 };
-let commandHandler:handler.CommandHandler;
+let commandHandler: handler.CommandHandler;
 
-let Commands={
+let Commands = {
 	"compileW": "make",
 	"cleanW": "make clean",
 	"runW": "START \\B perdita \"rom.dux\"",
@@ -44,23 +44,23 @@ let Commands={
 suite('Handle Windows Commands Suite Test', () => {
 	vscode.window.showInformationMessage('Start all tests.');
 
-	before(()=>{
-		commandHandler=new handler.CommandWHandler(path.join(__dirname,"../../.."));
+	before(() => {
+		commandHandler = new handler.CommandWHandler(path.join(__dirname, "../../.."));
 	});
-	test('Handler compiler test',()=>{
-		
-		assert.strictEqual(commandHandler?.compile(new CommandData(data)),Commands["compileW"]);
+	test('Handler compiler test', () => {
+
+		assert.strictEqual(commandHandler?.compile(new CommandData(data)), Commands["compileW"]);
 	});
-	test('Handler Clean test',()=>{
-		
-		assert.strictEqual(commandHandler?.clean(new CommandData(data)),Commands["cleanW"]);
+	test('Handler Clean test', () => {
+
+		assert.strictEqual(commandHandler?.clean(new CommandData(data)), Commands["cleanW"]);
 	});
-	test('Handler RUN test',()=>{
-		assert.strictEqual(commandHandler?.run(new CommandData(data),false),Commands["runW"]);
+	test('Handler RUN test', () => {
+		assert.strictEqual(commandHandler?.run(new CommandData(data), false), Commands["runW"]);
 
 	});
-	test('Handler Environment Variables Test',()=>{
-		assert.strictEqual(commandHandler?.getEnvironmentVariablesData(new CommandData(data)),Commands["envVarW"]);
+	test('Handler Environment Variables Test', () => {
+		assert.strictEqual(commandHandler?.getEnvironmentVariablesData(new CommandData(data)), Commands["envVarW"]);
 
 	});
 });
@@ -68,66 +68,66 @@ suite('Handle Windows Commands Suite Test', () => {
 suite('Handle Linux Commands Suite Test', () => {
 	vscode.window.showInformationMessage('Start all tests.');
 
-	before(()=>{
-		commandHandler=new handler.CommandLHandler(path.join(__dirname,"../../.."));
+	before(() => {
+		commandHandler = new handler.CommandLHandler(path.join(__dirname, "../../.."));
 	});
-	test('Handler compiler test',()=>{
-		
-		assert.strictEqual(commandHandler?.compile(new CommandData(data)),Commands["compileL"]);
+	test('Handler compiler test', () => {
+
+		assert.strictEqual(commandHandler?.compile(new CommandData(data)), Commands["compileL"]);
 	});
-	test('Handler Clean test',()=>{
-		
-		assert.strictEqual(commandHandler?.clean(new CommandData(data)),Commands["cleanL"]);
+	test('Handler Clean test', () => {
+
+		assert.strictEqual(commandHandler?.clean(new CommandData(data)), Commands["cleanL"]);
 	});
-	test('Handler RUN test',()=>{
-		assert.strictEqual(commandHandler?.run(new CommandData(data),false),Commands["runL"]);
+	test('Handler RUN test', () => {
+		assert.strictEqual(commandHandler?.run(new CommandData(data), false), Commands["runL"]);
 
 	});
-	test('Handler Environment Variables Test',()=>{
-		assert.strictEqual(commandHandler?.getEnvironmentVariablesData(new CommandData(data)),Commands["envVarL"]);
+	test('Handler Environment Variables Test', () => {
+		assert.strictEqual(commandHandler?.getEnvironmentVariablesData(new CommandData(data)), Commands["envVarL"]);
 
 	});
 });
 suite('Handle Darwin Commands Suite Test', () => {
 	vscode.window.showInformationMessage('Start all tests.');
 
-	before(()=>{
-		commandHandler=new handler.CommandDHandler(path.join(__dirname,"../../.."));
+	before(() => {
+		commandHandler = new handler.CommandDHandler(path.join(__dirname, "../../.."));
 	});
-	test('Handler compiler test',()=>{
-		
-		assert.strictEqual(commandHandler?.compile(new CommandData(data)),Commands["compileD"]);
+	test('Handler compiler test', () => {
+
+		assert.strictEqual(commandHandler?.compile(new CommandData(data)), Commands["compileD"]);
 	});
-	test('Handler Clean test',()=>{
-		
-		assert.strictEqual(commandHandler?.clean(new CommandData(data)),Commands["cleanD"]);
+	test('Handler Clean test', () => {
+
+		assert.strictEqual(commandHandler?.clean(new CommandData(data)), Commands["cleanD"]);
 	});
-	test('Handler RUN test',()=>{
-		assert.strictEqual(commandHandler?.run(new CommandData(data),false),Commands["runD"]);
+	test('Handler RUN test', () => {
+		assert.strictEqual(commandHandler?.run(new CommandData(data), false), Commands["runD"]);
 
 	});
-	test('Handler Environment Variables Test',()=>{
-		assert.strictEqual(commandHandler?.getEnvironmentVariablesData(new CommandData(data)),Commands["envVarD"]);
+	test('Handler Environment Variables Test', () => {
+		assert.strictEqual(commandHandler?.getEnvironmentVariablesData(new CommandData(data)), Commands["envVarD"]);
 
 	});
 });
 suite('Handle Docker Commands Suite Test', () => {
 	vscode.window.showInformationMessage('Start all tests.');
 
-	before(()=>{
-		commandHandler=new handler.CommandDockerHandler(path.join(__dirname,"../../.."),"win32");
+	before(() => {
+		commandHandler = new handler.CommandDockerHandler(path.join(__dirname, "../../.."), "win32");
 	});
-	test('Handler compiler test',()=>{
-		
-		assert.strictEqual(commandHandler?.compile(new CommandData(data)),Commands["compileDocker"]);
+	test('Handler compiler test', () => {
+
+		assert.strictEqual(commandHandler?.compile(new CommandData(data)), Commands["compileDocker"]);
 	});
-	test('Handler Clean test',()=>{
-		
-		assert.strictEqual(commandHandler?.clean(new CommandData(data)),Commands["cleanDocker"]);
+	test('Handler Clean test', () => {
+
+		assert.strictEqual(commandHandler?.clean(new CommandData(data)), Commands["cleanDocker"]);
 	});
-	test('Handler RUN test',()=>{
-		assert.strictEqual(commandHandler?.run(new CommandData(data),false),Commands["runDocker"]);
+	test('Handler RUN test', () => {
+		assert.strictEqual(commandHandler?.run(new CommandData(data), false), Commands["runDocker"]);
 
 	});
-	
+
 });

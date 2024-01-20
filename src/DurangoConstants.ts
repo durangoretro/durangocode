@@ -10,9 +10,9 @@ export const NANOBOOTPATHCONFIG = "NanobootPath";
 
 export const TOOLCHAINTYPE = "ToolchainType";
 
-export const DOCKERTAG="DockerImageName";
+export const DOCKERTAG = "DockerImageName";
 
-export const ROMLOCATION ="romLocation";
+export const ROMLOCATION = "romLocation";
 
 //Commands
 
@@ -43,8 +43,8 @@ export const NATIVE = 'Native';
 
 export const DOCKER = 'Docker';
 
-export const DEFAULTTAG='zerasul/durangodevkit';
+export const DEFAULTTAG = 'zerasul/durangodevkit';
 
-export const DEFAULTEXECMODE="Emulator";
+export const DEFAULTEXECMODE = "Emulator";
 
-export const EXECMODE= "ExecMode";
+export const EXECMODE = "ExecMode";
