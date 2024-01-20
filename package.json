@@ -2,8 +2,9 @@
   "name": "durango-code",
   "displayName": "Durango Code",
   "description": "Durango Computer Development Extension For VSCode",
-  "publisher": "Zerasul",
+  "publisher": "zerasul",
   "icon": "imgs/durangoicon.png",
+  "license":"MIT",
   "keywords": [
     "durango",
     "6502",
