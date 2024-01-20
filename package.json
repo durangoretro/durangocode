@@ -14,7 +14,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "durcode.compileProject",
+        "command": "durango-code.compileProject",
         "title": "Durango Code: Compile Project"
       },
       {
@@ -36,14 +36,6 @@
       {
         "command": "durango-code.run-nanoboot",
         "title": "Durango Code: Run Using NanoBoot"
-      },
-      {
-        "command": "durango-code.send-to-durango-psv",
-        "title": "Durango Code: Send To Durango (PSV)"
-      },
-      {
-        "command": "durango-code.load-from-durango-psv",
-        "title": "Durango Code: Load From Durango PSV"
       }
     ],
     "configuration": {

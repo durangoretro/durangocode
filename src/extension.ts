@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 	//Compile Command
-	let disposableCompile = vscode.commands.registerCommand('durcode.compileProject', () => {
+	let disposableCompile = vscode.commands.registerCommand('durango-code.compileProject', () => {
 		appCore.compile();
 	});
 
