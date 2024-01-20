@@ -75,20 +75,6 @@
           "default": "nanoboot",
           "description": "NanoBoot Executable Path"
         },
-        "ExecutionMode": {
-          "title": "Execution Mode",
-          "type": "string",
-          "enum": [
-            "Emulator",
-            "NanoBoot"
-          ],
-          "enumDescriptions": [
-            "Use Perdita Emulator",
-            "Use NanoBoot"
-          ],
-          "default": "Emulator",
-          "description": "Select Execution Type (using Emulator or using NanoBoot"
-        },
         "DockerImageName": {
           "title": "Docker Image Name",
           "type": "string",
@@ -104,6 +90,12 @@
           "title": "Custom Rescomp Jar Path",
           "type": "string",
           "description": "Custom Rescomp Jar Path"
+        },
+        "romLocation": {
+          "title": "Rom File Location",
+          "type":"string",
+          "description": "Custom Rom Location (rom.dux by default)",
+          "default":"rom.dux"
         }
       }
     }

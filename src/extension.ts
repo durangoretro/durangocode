@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { AppCore } from './appCore';
+import { AppCore, EXEC_MODE } from './appCore';
 
 let appCore:AppCore;
 // this method is called when your extension is activated
@@ -31,6 +31,10 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		});
 	});
+	//Compile And Run (On Emulator)
+	let disposableCompileAndRun = vscode.commands.registerCommand('durango-code.compile-and-run-project',()=>{
+		appCore.compileAndRun(EXEC_MODE.Emulator);
+	});
 
 	/**
 	 * Clean Command
@@ -39,9 +43,22 @@ export function activate(context: vscode.ExtensionContext) {
 		appCore.clean();
 	});
 
+	// Run on an emulator (perdita)
+	let disposableRunEmulator = vscode.commands.registerCommand('durango-code.run-project', () =>{
+		appCore.run(EXEC_MODE.Emulator);
+	});
+
+	//Run using NanoBoot
+	let disposableRunNanoboot= vscode.commands.registerCommand('durango-code.run-nanoboot', ()=>{
+		appCore.run(EXEC_MODE.NANOBOOT);
+	});
+
 	context.subscriptions.push(disposableCompile);
 	context.subscriptions.push(disposableCreate);
 	context.subscriptions.push(disposableClean);
+	context.subscriptions.push(disposableCompileAndRun);
+	context.subscriptions.push(disposableRunEmulator);
+	context.subscriptions.push(disposableRunNanoboot);
 }
 
 // this method is called when your extension is deactivated

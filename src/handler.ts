@@ -5,17 +5,7 @@ import * as DurangoConstants from "./DurangoConstants";
 import { platform } from "os";
 import { CommandData } from "./utils";
 
-/**
- * EXECUTION MODE:
- * * PEDITA: Run on Perdita Emulator.
- * * NANOBOOT: Run Using NanoBoot.
- */
-export enum EXEC_MODE {
-    /**Perdita Emulator */
-    Emulator,
-    /**Run Using NanoBoot */
-    NANOBOOT
-};
+
 
 /**
  * Current System Configuration
@@ -134,19 +124,8 @@ export abstract class CommandHandler {
      */
     protected getCurrentExecutable(commandData: CommandData): string | undefined {
 
-        let execConfig = commandData.getData(DurangoConstants.EXECUTIONMODECONFIG);
-        let execKey = execConfig as keyof typeof EXEC_MODE;
-
-        let executable = "";
-        let execMode = EXEC_MODE[execKey];
-        switch (execMode) {
-            case EXEC_MODE.Emulator:
-                executable = commandData.getData(DurangoConstants.PERDITAPATHCONFIG, "perdita");
-                break;
-            case EXEC_MODE.NANOBOOT:
-                executable = commandData.getData(DurangoConstants.NANOBOOTPATHCONFIG, "nanoboot");
-                break;
-        }
+        let executable = commandData.getData(DurangoConstants.EXECUTABLE, "perdita");
+        
         return executable;
     }
 
@@ -174,9 +153,10 @@ export abstract class CommandHandler {
         let executable = this.getCurrentExecutable(commandData);
 
         let executeCommand: string | undefined = this.handleCommand(DurangoConstants.RUN, this.System);
+        let romFile = commandData.getData(DurangoConstants.ROMLOCATION);
         if (executable)
             executeCommand = executeCommand?.replace(/{{executable}}/, executable)
-                .replace(/{{romFile}}/, "bin/rom.dux");
+                .replace(/{{romFile}}/, romFile);
 
         return executeCommand;
     }

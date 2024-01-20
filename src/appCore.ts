@@ -6,6 +6,19 @@ import { copyFileSync, mkdirSync } from "fs";
 import path = require("path");
 import { CommandData } from "./utils";
 
+
+/**
+ * EXECUTION MODE:
+ * * PEDITA: Run on Perdita Emulator.
+ * * NANOBOOT: Run Using NanoBoot.
+ */
+export enum EXEC_MODE {
+    /**Perdita Emulator */
+    Emulator,
+    /**Run Using NanoBoot */
+    NANOBOOT
+};
+
 /**
  * Application Core Class; manage all the extension; operations.
  */
@@ -100,7 +113,6 @@ export class AppCore {
     private compileWithLine(newLine:boolean){
         let ddKConfig = vscode.workspace.getConfiguration().get(DurangoConstants.DDK)
         let rescompConfig = vscode.workspace.getConfiguration().get(DurangoConstants.CUSTOMRESCOMP);
-        console.log(rescompConfig);
         let data:any = {};
         data[DurangoConstants.DDK] = ddKConfig;
         data[DurangoConstants.CUSTOMRESCOMP] = rescompConfig;
@@ -108,7 +120,7 @@ export class AppCore {
         if (this.docker) {
             data[DurangoConstants.DOCKERTAG] = vscode.workspace.getConfiguration().get(DurangoConstants.DOCKERTAG);
         } else {
-            this.executeCommand(customEnvVariables);
+            this.executeCommand(customEnvVariables,newLine);
         }
 
         let compileCommand = this.commandHandler.compile(new CommandData(data));
@@ -139,26 +151,49 @@ export class AppCore {
         } else {
             this.executeCommand(customEnvVariables);
         }
-        this.commandHandler?.clean(new CommandData(data));
+        let cleanCommand =  this.commandHandler?.clean(new CommandData(data));
+        if(cleanCommand){
+            this.executeCommand(cleanCommand);
+        }
     }
 
-    private composeRun(compose:Boolean=false){
+    private composeRun(execMode:EXEC_MODE,compose:Boolean=false){
+       let runCommand="";
+        if(compose){
+            runCommand+=" && ";
+       }
         let data:any={};
-        data[DurangoConstants.EXECUTIONMODECONFIG]= vscode.workspace.getConfiguration().get(DurangoConstants.EXECUTIONMODECONFIG);
-        
-        let runCommand = this.commandHandler.run(new CommandData(data),compose);
+        let executable:string|undefined="";
+        switch(execMode){
+            case EXEC_MODE.Emulator:
+                executable=vscode.workspace.getConfiguration().get(DurangoConstants.PERDITAPATHCONFIG);
+                break;
+            case EXEC_MODE.NANOBOOT:
+                executable=vscode.workspace.getConfiguration().get(DurangoConstants.NANOBOOTPATHCONFIG);
+                break;
+        }
+        data[DurangoConstants.EXECUTABLE]=executable;
+        data[DurangoConstants.ROMLOCATION]=vscode.workspace.getConfiguration().get(DurangoConstants.ROMLOCATION);
+        runCommand += this.commandHandler.run(new CommandData(data),compose);
         if(runCommand)
             this.executeCommand(runCommand,true);
         
     }
-
-    public run(){
-        this.composeRun();
+    /**
+     * Run the generated ROM on an emulator or using NanoBoot on Raspberry Pi
+     * @param execMode Execution Mode emulator or using nanoboot @see EXEC_MODE
+     */
+    public run(execMode:EXEC_MODE){
+        this.composeRun(execMode);
     }
 
-    public compileAndRun(){
+    /**
+     * Compile the project and later run the generated Rom using an emulator or nanoboot
+     * @param execMode Execution Mode using an Emulator or using Nano Boot @see EXEC_MODE
+     */
+    public compileAndRun(execMode:EXEC_MODE){
         this.compileWithLine(false);
-        this.composeRun(true);
+        this.composeRun(execMode,true);
     }
 
     /**

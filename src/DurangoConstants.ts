@@ -4,8 +4,6 @@ export const DDK = "DDK";
 
 export const CUSTOMRESCOMP = "CustomRescompJar";
 
-export const EXECUTIONMODECONFIG = "ExecutionMode";
-
 export const PERDITAPATHCONFIG = "PerditaPath";
 
 export const NANOBOOTPATHCONFIG = "NanobootPath";
@@ -13,6 +11,8 @@ export const NANOBOOTPATHCONFIG = "NanobootPath";
 export const TOOLCHAINTYPE = "ToolchainType";
 
 export const DOCKERTAG="DockerImageName";
+
+export const ROMLOCATION ="romLocation";
 
 //Commands
 
@@ -24,7 +24,7 @@ export const RUN = "run";
 
 //Replacements
 
-export const EXECUTABLE = "{{executable}}";
+export const EXECUTABLE = "executable";
 
 export const CURRENTPATH = "currentPath";
 
@@ -46,3 +46,5 @@ export const DOCKER = 'Docker';
 export const DEFAULTTAG='zerasul/durangodevkit';
 
 export const DEFAULTEXECMODE="Emulator";
+
+export const EXECMODE= "ExecMode";

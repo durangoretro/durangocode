@@ -3,7 +3,7 @@ import * as assert from 'assert';
 // as well as import your extension to test it
 import path = require('path');
 import { before } from 'mocha';
-import { AppCore } from '../../appCore';
+import { AppCore, EXEC_MODE } from '../../appCore';
 
 let appCore: AppCore;
 
@@ -25,7 +25,7 @@ suite('AppCore Test', () => {
         assert.notStrictEqual(appCore.terminal,undefined);
     });
     test('Test Run', () => {
-        appCore.run();
+        appCore.run(EXEC_MODE.Emulator);
         //@ts-ignore
         assert.notStrictEqual(appCore.terminal,undefined);
     });
