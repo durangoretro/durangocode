@@ -1,71 +1,69 @@
 # durango-code README
 
-This is the README for your extension "durango-code". After writing up a brief description, we recommend including the following sections.
+Durango Code is a Visual Studio Code extension, for use to development for [Durango Retro Project](https://durangoretro.com) this extension allows to configure and works for create new software for the Durango Platform.
+
+This extension uses the Durango Development Tools and CC65 suite for create new software; you can check all the documentation for these tools on the next address:
+
+* CC65 suite: [https://cc65.github.io/](https://cc65.github.io/)
+* Durango Development Tools: [http://durangoretro.com/tools/development/](http://durangoretro.com/tools/development/)
+
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+This extension adds the next commands; to see the commands press <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>p</kbd> and select the command starting with ```Durango Code:```:
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+* ```Create Project```: Create a new Project for Durango on specific location.
+* ```Compile Project```: Compile an existing Durango project.
+* ```Clean project```: Clean the current Durango Project.
+* ```Run on Emulator```: Run the current Durango Project using Durango-x Emulator (perdita).
+* ```Run using NanoBoot```: Run the current Durango Project on a Durango-x Machine using nanoboot Rom (Only for Raspberry Pi Versions).
+* ```Compile And Run```: Compile the current Project and then Run the project using Durango-x Emulator (perdita).
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+To use this extension you will need the CC65 suite, the DurangoLib library and the Rescomp Java Application.
+
+In addition, you can use the Durango Dev Kit Docker Image.
+
+For more information about the Durango Development Tools or the CC65, you can check the next links:
+
+* Durango Lib: [http://durangoretro.com/dev/lang/durangolib/](http://durangoretro.com/dev/lang/durangolib/).
+* Rescomp: [http://durangoretro.com/tools/tools/#rescomp](http://durangoretro.com/tools/tools/#rescomp)
+* Durango Dev Kit Docker Image: [http://durangoretro.com/tools/docker/](http://durangoretro.com/tools/docker/)
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+This extension adds some needed configuration to custom all the Durango Development Tools configuration.
 
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+* ```Perdita Path```: The current Durango-x Emulator executable Path.
+* ```NanoBoot Path```: The current NanoBoot executable Path.
+* ```DDK```: Overrides the current ```DDK``` environment Variable.
+* ```Custom Rescomp Jar```: Custom Rescomp Jar application path. By default is on ```$DDK/rescomp/rescomp.jar```.
+* ```romLocation```: Location where the Rom is generated after compilation.
+* ```DockerImageName```: Durango Dev Kit Docker Image Name; by default ```zerasul/durangodevkit```.
+* ```toolchain Type```: Select the current Toolchain type:
+    * ```Native```: Use Native Commands (Depends on Operating System).
+    * ```Docker```: Use Docker Image implementation. 
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+This extension is still on development and can have some issues; please send us the issues or improvements using issues tab on the Durango Retro Github Repository:
+
+[https://github.com/durangoretro/durangocode/issues](https://github.com/durangoretro/durangocode/issues)
+
+**NOTE:** On windows Systems you need to select as default terminal command Prompt (cmd). You can select this using the terminal panel and select the default profile on the down arrow button at the right of the "plus" button.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
 ### 1.0.0
 
-Initial release of ...
+Initial release of the extension. Adds the current commands:
 
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+* Compile Project.
+* Clean Project.
+* Run on Emulator.
+* Run using NanoBoot.
+* Compile And Run.
 
 ---
 
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**

@@ -2,24 +2,95 @@
   "name": "durango-code",
   "displayName": "Durango Code",
   "description": "Durango Computer Development Extension For VSCode",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
-    "vscode": "^1.71.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:durango-code.helloWorld"
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "durango-code.helloWorld",
-        "title": "Hello World"
+        "command": "durango-code.compileProject",
+        "title": "Durango Code: Compile Project"
+      },
+      {
+        "command": "durango-code.clean-project",
+        "title": "Durango Code: Clean Project"
+      },
+      {
+        "command": "durango-code.run-project",
+        "title": "Durango Code: Run on an Emulator"
+      },
+      {
+        "command": "durango-code.compile-and-run-project",
+        "title": "Durango Code: Compile and Run on an Emulator"
+      },
+      {
+        "command": "durango-code.create-project",
+        "title": "Durango Code: Create new Project"
+      },
+      {
+        "command": "durango-code.run-nanoboot",
+        "title": "Durango Code: Run Using NanoBoot"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Durango Code",
+      "properties": {
+        "PerditaPath": {
+          "title": "Perdita Path",
+          "type": "string",
+          "default": "perdita",
+          "description": "Perdita Emulator Executable Path"
+        },
+        "ToolchainType": {
+          "Title": "ToolChain Type",
+          "type": "string",
+          "enum": [
+            "Native",
+            "Docker"
+          ],
+          "enumDescriptions": [
+            "Use Native Commands",
+            "Use Docker Image"
+          ],
+          "default": "Native",
+          "description": "Defines the Toolchain To use Native Commands or use Docker Containers"
+        },
+        "NanobootPath": {
+          "title": "NanoBoot Path",
+          "type": "string",
+          "default": "nanoboot",
+          "description": "NanoBoot Executable Path"
+        },
+        "DockerImageName": {
+          "title": "Docker Image Name",
+          "type": "string",
+          "default": "zerasul/durangodevkit",
+          "description": "Durango Docker Image Name"
+        },
+        "DDK": {
+          "title": "Durango Dev Kit Path",
+          "type": "string",
+          "description": "Override current Durango Dev Kit Environment Variable"
+        },
+        "CustomRescompJar": {
+          "title": "Custom Rescomp Jar Path",
+          "type": "string",
+          "description": "Custom Rescomp Jar Path"
+        },
+        "romLocation": {
+          "title": "Rom File Location",
+          "type":"string",
+          "description": "Custom Rom Location (rom.dux by default)",
+          "default":"rom.dux"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -30,16 +101,17 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.71.0",
+    "@types/chai": "^4.3.11",
     "@types/glob": "^7.2.0",
     "@types/mocha": "^9.1.1",
-    "@types/node": "16.x",
+    "@types/node": "^16.x",
+    "@types/vscode": "^1.75.0",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
+    "@vscode/test-electron": "^2.1.5",
     "eslint": "^8.20.0",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
-    "typescript": "^4.7.4",
-    "@vscode/test-electron": "^2.1.5"
+    "typescript": "^4.7.4"
   }
 }
