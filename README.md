@@ -12,7 +12,7 @@ This extension uses the Durango Development Tools and CC65 suite for create new 
 
 ## Features
 
-This extension adds the next commands; to see the commands press <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>p</kbd> and select the command starting with ```Durango Code:```:
+This extension adds the next commands; to see the commands press <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>p</kbd> and select the command starting with ```Durango Code```:
 
 * ```Create Project```: Create a new Project for Durango on specific location.
 * ```Compile Project```: Compile an existing Durango project.
@@ -57,7 +57,7 @@ This extension is still on development and can have some issues; please send us 
 
 ## Release Notes
 
-### 1.0.0
+### 1.0.1
 
 Initial release of the extension. Adds the current commands:
 
